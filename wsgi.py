@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 
 path = os.path.dirname(os.path.abspath(__file__))
 if path not in sys.path:
@@ -9,7 +10,6 @@ from app import app, get_db
 
 application = app
 
-# محاولة إنشاء الجداول تلقائياً عند التشغيل
 try:
     conn = get_db()
     cursor = conn.cursor()
@@ -17,14 +17,18 @@ try:
     sql_file = os.path.join(path, 'database.sql')
     if os.path.exists(sql_file):
         with open(sql_file, 'r', encoding='utf-8') as f:
-            sql_commands = f.read().split(';')
+            sql_content = f.read()
             
-        for command in sql_commands:
+        # تجاهل أوامر CREATE DATABASE و USE
+        sql_content = re.sub(r'CREATE DATABASE.*?;', '', sql_content, flags=re.DOTALL)
+        sql_content = re.sub(r'USE .*?;', '', sql_content, flags=re.DOTALL)
+        
+        for command in sql_content.split(';'):
             if command.strip():
                 try:
                     cursor.execute(command)
                 except Exception:
-                    pass # تجاهل الأخطاء إذا كانت الجداول موجودة مسبقاً
+                    pass
         
         conn.commit()
         print("✅ تم التحقق من الجداول بنجاح")
