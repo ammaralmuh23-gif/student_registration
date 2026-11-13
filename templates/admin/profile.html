@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>الملف الشخصي للمدير</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">🎓 لوحة تحكم المدير</div>
+        <div>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn">طلبات التسجيل</a>
+            <a href="{{ url_for('logout') }}" class="btn-danger">خروج</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <h2 style="margin-top: 30px;">👤 الملف الشخصي للمدير</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <!-- جدول عرض بيانات المدير -->
+        <table style="margin-top: 20px;">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>اسم المستخدم</th>
+                    <th>كلمة المرور</th>
+                    <th>إجراء</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ admin.id }}</td>
+                    <td>{{ admin.username }}</td>
+                    <td>{{ admin.password }}</td>
+                    <td>
+                        <button onclick="showEditForm()" class="btn-sm">تعديل</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- نموذج التعديل (مخفي افتراضياً) -->
+        <div id="editForm" style="display: none; margin-top: 30px;" class="form-box">
+            <h3>تعديل بيانات المدير</h3>
+            <form method="POST">
+                <label>اسم المستخدم الجديد</label>
+                <input type="text" name="username" value="{{ admin.username }}" required>
+
+                <label>كلمة المرور الجديدة</label>
+                <input type="text" name="password" value="{{ admin.password }}" required>
+
+                <div class="form-actions" style="margin-top: 20px;">
+                    <button type="submit" class="btn-success">حفظ التعديلات</button>
+                    <button type="button" class="btn btn-secondary" onclick="hideEditForm()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        function showEditForm() {
+            document.getElementById('editForm').style.display = 'block';
+        }
+        function hideEditForm() {
+            document.getElementById('editForm').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

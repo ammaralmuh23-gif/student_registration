@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة تحكم المدير</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">🎓 لوحة تحكم المدير</div>
+        <div>
+            <a href="{{ url_for('index') }}" class="btn">عرض الموقع</a>
+            <a href="{{ url_for('admin_profile') }}" class="btn">👤 الملف الشخصي</a>
+            <a href="{{ url_for('logout') }}" class="btn-danger">خروج</a>
+        </div>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="cards">
+            <div class="card"><div class="card-value">{{ total }}</div><div>إجمالي الطلبات</div></div>
+            <div class="card"><div class="card-value">{{ pending }}</div><div>قيد المراجعة</div></div>
+            <div class="card"><div class="card-value">{{ accepted }}</div><div>مقبول</div></div>
+            <div class="card"><div class="card-value">{{ rejected }}</div><div>مرفوض</div></div>
+        </div>
+
+        <h2>طلبات التسجيل</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>الاسم</th>
+                    <th>تاريخ الميلاد</th>
+                    <th>الهاتف</th>
+                    <th>الصف</th>
+                    <th>الحالة</th>
+                    <th>تغيير الحالة</th>
+                    <th>حذف</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.id }}</td>
+                    <td>{{ student.full_name }}</td>
+                    <td>{{ student.birth_date }}</td>
+                    <td>{{ student.phone }}</td>
+                    <td>{{ student.grade }}</td>
+                    <td>
+                        {% if student.status == 'pending' %}
+                            <span class="badge badge-pending">⏳ قيد المراجعة</span>
+                        {% elif student.status == 'accepted' %}
+                            <span class="badge badge-accepted">✅ مقبول</span>
+                        {% else %}
+                            <span class="badge badge-rejected">❌ مرفوض</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('update_status', id=student.id) }}" method="POST" style="display:flex; gap:5px;">
+                            <select name="status">
+                                <option value="pending" {% if student.status == 'pending' %}selected{% endif %}>قيد المراجعة</option>
+                                <option value="accepted" {% if student.status == 'accepted' %}selected{% endif %}>مقبول</option>
+                                <option value="rejected" {% if student.status == 'rejected' %}selected{% endif %}>مرفوض</option>
+                            </select>
+                            <button type="submit" class="btn-sm">حفظ</button>
+                        </form>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('delete_student', id=student.id) }}" class="btn-sm btn-danger" onclick="return confirm('حذف الطالب؟')">حذف</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="8" style="text-align:center;">لا توجد طلبات حتى الآن.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

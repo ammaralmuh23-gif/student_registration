@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تسجيل طالب جديد</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">🎓 تسجيل الطلاب الجدد</div>
+        <a href="{{ url_for('index') }}" class="btn">الرئيسية</a>
+    </header>
+
+    <div class="form-box">
+        <h2>نموذج تسجيل طالب جديد</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST">
+            <label>الاسم الكامل *</label>
+            <input type="text" name="full_name" required>
+
+            <label>تاريخ الميلاد *</label>
+            <input type="date" name="birth_date" required>
+
+            <label>العنوان *</label>
+            <textarea name="address" required rows="3"></textarea>
+
+            <label>رقم الهاتف *</label>
+            <input type="text" name="phone" required>
+
+            <label>الصف المطلوب *</label>
+            <select name="grade" required>
+                <option value="">اختر الصف</option>
+                <option value="الأول">الأول</option>
+                <option value="الثاني">الثاني</option>
+                <option value="الثالث">الثالث</option>
+                <option value="الرابع">الرابع</option>
+                <option value="الخامس">الخامس</option>
+                <option value="السادس">السادس</option>
+            </select>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-success">إرسال الطلب</button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">إلغاء</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
